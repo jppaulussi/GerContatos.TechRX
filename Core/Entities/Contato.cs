@@ -23,8 +23,10 @@ public class Contato : EntityBase
     public int RegiaoId { get; set; }
     public int UsuarioId { get; set; }
     public int TipoTelefoneId { get; set; }
-    public Regiao Regiao { get; set; } = new Regiao();
+    public Regiao Regiao { get; set; } = new Regiao(); 
     public Usuario Usuario { get; set; } = new Usuario();
     public TipoTelefone TipoTelefone { get; set; } = new TipoTelefone();
+
+    
 
 }
