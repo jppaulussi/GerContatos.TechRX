@@ -9,6 +9,6 @@ namespace Core.Dto.DDD;
 
 public class GetByIdDDDDto : EntityBase
 {
-    public string? CodigoDDD { get; set; } 
+    public string CodigoDDD { get; set; } = string.Empty;
     public int RegiaoId { get; set; }
 }

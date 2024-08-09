@@ -11,5 +11,5 @@ public class Regiao : EntityBase
     public string Name { get; set; }
 
     public ICollection<Contato> Contatos { get; set; }
-    public ICollection<DDD>? DDDs { get; set; } 
+    public ICollection<DDD> DDDs{ get; set; }
 }

@@ -13,7 +13,5 @@ public class ContatoRepository : EFRepository<Contato>, IContatoRepository
 {
     public ContatoRepository(AppDbContext context) : base(context)
     {
-
-
     }
 }

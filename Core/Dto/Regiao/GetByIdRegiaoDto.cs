@@ -10,5 +10,4 @@ namespace Core.Dto.Regiao;
 public class GetByIdRegiaoDto : EntityBase
 {
     public string Name { get; set; }
-
 }
