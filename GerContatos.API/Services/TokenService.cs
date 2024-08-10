@@ -25,8 +25,7 @@ public class TokenService : ITokenService
         try
         {
 
-           
-
+     
             var usuarioExistente = (await _usuarioService.GetAllToken()).Data!.Where(usu => usu.Email == usuario.Email && usu.Password == usuario.Password).FirstOrDefault();
 
             if (usuarioExistente == null)
@@ -54,8 +53,8 @@ public class TokenService : ITokenService
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.UtcNow.AddHours(1),
-                //Issuer = _configuration["Jwt:Issuer"],
-                //Audience = _configuration["Jwt:Audience"],
+                Issuer = _configuration["Jwt:Issuer"],
+                Audience = _configuration["Jwt:Audience"],
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(chaveCriptografia),
                                      SecurityAlgorithms.HmacSha256Signature)
             };
