@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Model", "Model\Model.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GerContatos.API", "GerContatos.API\GerContatos.API.csproj", "{75C46FB8-D9E4-4593-AA96-210CF6077034}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Testes", "Testes\Testes.csproj", "{2F2DFED3-7051-4A7B-BA94-F5D4261485AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{75C46FB8-D9E4-4593-AA96-210CF6077034}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{75C46FB8-D9E4-4593-AA96-210CF6077034}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{75C46FB8-D9E4-4593-AA96-210CF6077034}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F2DFED3-7051-4A7B-BA94-F5D4261485AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F2DFED3-7051-4A7B-BA94-F5D4261485AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F2DFED3-7051-4A7B-BA94-F5D4261485AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F2DFED3-7051-4A7B-BA94-F5D4261485AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -16,10 +16,12 @@ namespace GerContatos.API.Services
             try
             {
                 await _usuarioRepository.Create(entidade);
-                return new Response<CreateUsuarioDto?>(null,201,"Usuário cadastrato com sucesso");
+                var dto = _mapper.Map<CreateUsuarioDto>(entidade);
+                return new Response<CreateUsuarioDto?>(dto, 201, "Usuário cadastrado com sucesso");
             }
-            catch{
-                return new Response<CreateUsuarioDto?>(null, 500, "Não foi possível cadastrar o usuário");
+            catch (Exception ex)
+            {
+                return new Response<CreateUsuarioDto?>(null, 500, $"Não foi possível cadastrar o usuário: {ex.Message}");
             }
         }
 

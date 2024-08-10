@@ -30,12 +30,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
 builder.Services.AddScoped<IDDDRepository, DDDRepository>();
+builder.Services.AddScoped<IRegiaoService, RegiaoService>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<ITipoTelefoneRepository, TipoTelefoneRepository>();
 // registra services to the container.E
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IContatoService, ContatoService>();
 builder.Services.AddScoped<IDDDService, DDDService>();
+builder.Services.AddScoped<IRegiaoService, RegiaoService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITipoTelefoneService, TipoTelefoneService>();
 
