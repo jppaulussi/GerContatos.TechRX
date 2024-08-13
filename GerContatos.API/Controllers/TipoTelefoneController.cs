@@ -4,6 +4,7 @@ using Core.Entities;
 using Core.Dto.TipoTelefone;
 using Core.Responses;
 using System.Threading.Tasks;
+using AutoMapper;
 
 namespace GerContatos.API.Controllers
 {
@@ -12,10 +13,13 @@ namespace GerContatos.API.Controllers
     public class TipoTelefoneController : ControllerBase
     {
         private readonly ITipoTelefoneService _tipoTelefoneService;
+        private readonly IMapper _mapper;
 
-        public TipoTelefoneController(ITipoTelefoneService tipoTelefoneService)
+        public TipoTelefoneController(ITipoTelefoneService tipoTelefoneService, IMapper mapper)
         {
             _tipoTelefoneService = tipoTelefoneService;
+            _mapper = mapper; // Adicione esta linha
+
         }
 
         [HttpGet]
@@ -41,20 +45,33 @@ namespace GerContatos.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateTipoTelefoneDto dto)
+        public async Task<IActionResult> Create([FromBody] CreateTipoTelefoneDto createTipoTelefoneDto)
         {
-            if (dto == null)
+            if (createTipoTelefoneDto == null)
             {
                 return BadRequest("TipoTelefone cannot be null");
             }
 
-            var response = await _tipoTelefoneService.Create(dto);
-            if (response.IsSuccess)
+            // Mapeia o DTO para a entidade
+            var tipoTelefone = _mapper.Map<TipoTelefone>(createTipoTelefoneDto);
+
+            // Chama o serviço para criar o TipoTelefone
+            var result = await _tipoTelefoneService.Create(tipoTelefone);
+
+            // Verifica se a operação foi bem-sucedida
+            if (result.IsSuccess)
             {
-                return CreatedAtAction(nameof(GetById), new { id = response.Data.Id }, response.Data);
+                // Mapeia a entidade criada para o DTO
+                var tipoTelefoneDto = _mapper.Map<CreateTipoTelefoneDto>(result.Data);
+                // Retorna o status de criado com a localização do recurso
+                return CreatedAtAction(nameof(GetById), new { id = tipoTelefoneDto.Id }, tipoTelefoneDto);
             }
-            return BadRequest(response.Message);
+
+            // Se a operação falhou, retorna o erro apropriado
+            return BadRequest(result.Message);
         }
+
+
 
         [HttpPut]
         public async Task<IActionResult> Update([FromBody] UpdateTipoTelefoneDto dto)
@@ -64,12 +81,15 @@ namespace GerContatos.API.Controllers
                 return BadRequest("TipoTelefone cannot be null");
             }
 
-            var response = await _tipoTelefoneService.Update(dto);
+            var tipoTelefone = _mapper.Map<TipoTelefone>(dto);
+            var response = await _tipoTelefoneService.Update(tipoTelefone);
+
             if (response.IsSuccess)
             {
                 return Ok(response.Data);
             }
             return NotFound(response.Message);
         }
+
     }
 }

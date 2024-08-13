@@ -73,6 +73,8 @@ public class MappingProfile : Profile
 
 
 
+
+
         CreateMap<Regiao, CreateRegiaoDto>().ReverseMap();
         CreateMap<Regiao, UpdateRegiaoDto>().ReverseMap();
         CreateMap<Regiao, DeleteRegiaoDto>().ReverseMap();
@@ -97,11 +99,19 @@ public class MappingProfile : Profile
 
 
 
-        CreateMap<TipoTelefone, CreateTipoTelefoneDto>();
+       // CreateMap<TipoTelefone, CreateTipoTelefoneDto>();
         CreateMap<TipoTelefone, UpdateTipoTelefoneDto>();
         CreateMap<TipoTelefone, DeleteTipoTelefoneDto>();
         CreateMap<TipoTelefone, GetAllTipoTelefoneDto>();
         CreateMap<TipoTelefone, GetByIdTipoTelefoneDto>();
+        CreateMap<TipoTelefone, CreateTipoTelefoneDto>()
+            .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
+            .ForMember(dest => dest.Tipo, opt => opt.MapFrom(src => src.Tipo));
+        CreateMap<CreateTipoTelefoneDto, TipoTelefone>();
+
+
+
+
 
         CreateMap<Usuario, GetAllByTokenDto>();
     }
