@@ -6,12 +6,13 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
-using Business.Mapping;
+
 using Core.Interfaces.Repositories;
 using Infrastructure.Repository;
 using Infrastructure.Data;
 using Core;
 using Microsoft.EntityFrameworkCore;
+using Business.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 

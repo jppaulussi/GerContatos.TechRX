@@ -117,6 +117,27 @@ namespace GerContatos.API.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpDelete("{id}")]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                var response = await _contatoService.Delete(id);
+
+                if (response.IsSuccess)
+                {
+                    return NoContent();
+                }
+
+                return NotFound(response.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+        }
     }
 }
 

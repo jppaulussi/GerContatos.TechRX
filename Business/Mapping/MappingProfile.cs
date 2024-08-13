@@ -66,6 +66,7 @@ public class MappingProfile : Profile
 
         CreateMap<Contato, CreateContatoDto>();
         CreateMap<Contato, UpdateContatoDto>();
+
         CreateMap<Contato, DeleteContatoDto>();
         CreateMap<Contato, GetByIdContatoDto>();
         CreateMap<Contato, GetAllContatoDto>();
