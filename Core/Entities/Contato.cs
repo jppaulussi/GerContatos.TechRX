@@ -18,13 +18,15 @@ public class Contato : EntityBase
     [Required(ErrorMessage = "Telefone é obrigatório")]
     [StringLength(9, MinimumLength = 8, ErrorMessage = "A telefone deve conter entre 8 e 9 caracteres")]
     public string Telefone { get; set; } = string.Empty;
-    [EmailAddress]
+    [EmailAddress(ErrorMessage = "Formato de e-mail invalido")]
     public string Email { get; set; } = string.Empty;
-    public int RegiaoId { get; set; }
+    public int DDDId { get; set; }
     public int UsuarioId { get; set; }
     public int TipoTelefoneId { get; set; }
-    public Regiao Regiao { get; set; } = new Regiao();
-    public Usuario Usuario { get; set; } = new Usuario();
-    public TipoTelefone TipoTelefone { get; set; } = new TipoTelefone();
+
+
+    public DDD Ddd { get; set; } = null;
+    public Usuario Usuario { get; set; } = null;
+    public TipoTelefone TipoTelefone { get; set; } = null;
 
 }

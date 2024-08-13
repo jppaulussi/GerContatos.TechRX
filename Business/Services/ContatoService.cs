@@ -7,7 +7,7 @@ using Core.Responses;
 
 namespace GerContatos.API.Services;
 
-public class ContatoService(IContatoRepository _contatoRepository, IMapper _mapper,IDDDService _dddService, IRegiaoService _regiaoService ) : IContatoService
+public class ContatoService(IContatoRepository _contatoRepository, IMapper _mapper,IDDDService _dddService) : IContatoService
 
    
 {
@@ -16,21 +16,14 @@ public class ContatoService(IContatoRepository _contatoRepository, IMapper _mapp
 
         try
         {
-            // Obtém a região e faz o mapeamento do DTO para a entidade
-            var regiaoDto = await _regiaoService.GetById(entidade.RegiaoId);
-            if (regiaoDto?.Data == null)
-                return new Response<CreateContatoDto?>(null, 404, "Região não encontrada");
-
-            var regiaoEntity = _mapper.Map<Regiao>(regiaoDto.Data);
-            entidade.Regiao = regiaoEntity;
-
             // Obtém o DDD e faz o mapeamento do DTO para a entidade
-            var dddDto = await _dddService.GetById(entidade.RegiaoId);
+            var dddDto = await _dddService.GetById(entidade.DDDId);
             if (dddDto?.Data == null)
                 return new Response<CreateContatoDto?>(null, 404, "DDD não encontrado");
 
             var dddEntity = _mapper.Map<DDD>(dddDto.Data);
-            entidade.Regiao.DDDs = new List<DDD> { dddEntity };
+            entidade.DDDId = dddEntity.Id;
+
 
             // Continua o processo de criação do contato
             await _contatoRepository.Create(entidade);
@@ -103,21 +96,11 @@ public class ContatoService(IContatoRepository _contatoRepository, IMapper _mapp
     {
         try
         {
-            // Obtém a região e faz o mapeamento do DTO para a entidade
-            var regiaoDto = await _regiaoService.GetById(entidade.RegiaoId);
-            if (regiaoDto?.Data == null)
-                return new Response<UpdateContatoDto?>(null, 404, "Região não encontrada");
-
-            var regiaoEntity = _mapper.Map<Regiao>(regiaoDto.Data);
-            entidade.Regiao = regiaoEntity;
 
             // Obtém o DDD e faz o mapeamento do DTO para a entidade
-            var dddDto = await _dddService.GetById(entidade.RegiaoId);
+            var dddDto = await _dddService.GetById(entidade.DDDId);
             if (dddDto?.Data == null)
                 return new Response<UpdateContatoDto?>(null, 404, "DDD não encontrado");
-
-            var dddEntity = _mapper.Map<DDD>(dddDto.Data);
-            entidade.Regiao.DDDs = new List<DDD> { dddEntity };
 
             // Continua o processo de criação do contato
             await _contatoRepository.Update(entidade);

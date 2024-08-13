@@ -16,4 +16,6 @@ public interface IDDDService
     Task<Response<CreateDDDDto?>> Create(DDD entidade);
     Task<Response<UpdateDDDDto?>> Update(DDD entidade);
     Task<Response<DeleteDDDDto?>> Delete(int id);
+
+    
 }

@@ -4,11 +4,13 @@ using Core.Dto.Usuarios;
 using Core.Entities;
 using Core.Enums;
 using Core.Interfaces.Services;
+using Core.Request.Contact;
 using Core.Request.User;
 using GerContatos.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace GerContatos.API.Controllers
 {
@@ -18,7 +20,7 @@ namespace GerContatos.API.Controllers
     {
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> Create([FromBody] CreateContatoDto createContatoDto)
+        public async Task<IActionResult> Create([FromBody] CreateContactRequest createContatoDto)
         {
             try
             {
@@ -42,7 +44,9 @@ namespace GerContatos.API.Controllers
         [Authorize]
         public async Task<IActionResult> GetById(int id)
         {
+            
             var response = await _contatoService.GetById(id);
+
 
             if (response.IsSuccess)
             {
@@ -59,6 +63,7 @@ namespace GerContatos.API.Controllers
         {
             var response = await _contatoService.GetAll();
 
+          
             if (response.IsSuccess)
             {
                 var contatosDto = _mapper.Map<IList<GetAllContatoDto>>(response.Data);
@@ -81,7 +86,7 @@ namespace GerContatos.API.Controllers
             var todosContatos = await _contatoService.GetAll();
 
             // Passo 3: Filtrar os contatos pelo RegiaoId associado ao DDD
-            var contatosFiltrados = todosContatos.Data.Where(c => c.RegiaoId == regiaoId).ToList();
+            var contatosFiltrados = todosContatos.Data.Where(c => c.DDDId == dddId).ToList();
 
             if (!contatosFiltrados.Any())
                 return NotFound("Nenhum contato encontrado para o DDD especificado");
@@ -92,7 +97,7 @@ namespace GerContatos.API.Controllers
 
         [HttpPut("{id}")]
         [Authorize]
-        public async Task<IActionResult> Update(int id, [FromBody] UpdateContatoDto updateContatoDto)
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateContactRequest updateContatoDto)
         {
             try
             {

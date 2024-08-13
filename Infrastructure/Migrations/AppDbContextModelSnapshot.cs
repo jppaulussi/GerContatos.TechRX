@@ -29,6 +29,9 @@ namespace Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("DDDId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -38,9 +41,6 @@ namespace Infrastructure.Migrations
                         .IsRequired()
                         .HasMaxLength(150)
                         .HasColumnType("NVARCHAR");
-
-                    b.Property<int>("RegiaoId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Telefone")
                         .IsRequired()
@@ -55,7 +55,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RegiaoId");
+                    b.HasIndex("DDDId");
 
                     b.HasIndex("TipoTelefoneId");
 
@@ -176,9 +176,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Core.Entities.Contato", b =>
                 {
-                    b.HasOne("Core.Entities.Regiao", "Regiao")
+                    b.HasOne("Core.Entities.DDD", "Ddd")
                         .WithMany("Contatos")
-                        .HasForeignKey("RegiaoId")
+                        .HasForeignKey("DDDId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -194,7 +194,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Regiao");
+                    b.Navigation("Ddd");
 
                     b.Navigation("TipoTelefone");
 
@@ -223,10 +223,13 @@ namespace Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
-            modelBuilder.Entity("Core.Entities.Regiao", b =>
+            modelBuilder.Entity("Core.Entities.DDD", b =>
                 {
                     b.Navigation("Contatos");
+                });
 
+            modelBuilder.Entity("Core.Entities.Regiao", b =>
+                {
                     b.Navigation("DDDs");
                 });
 

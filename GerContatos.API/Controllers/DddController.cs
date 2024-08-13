@@ -47,8 +47,9 @@ namespace GerContatos.API.Controllers
                 return StatusCode(500, ex.Message);
             }
         }
-
+  
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetById(int id)
         {
             var response = await _dddService.GetById(id);
@@ -63,6 +64,7 @@ namespace GerContatos.API.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> GetAll()
         {
             var response = await _dddService.GetAll();
@@ -77,6 +79,7 @@ namespace GerContatos.API.Controllers
         }
 
         [HttpGet("por-regiao/{regiaoId}")]
+        [Authorize]
         public async Task<IActionResult> GetByRegiaoId(int regiaoId)
         {
             try

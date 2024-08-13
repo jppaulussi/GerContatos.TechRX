@@ -27,12 +27,18 @@ public class MappingProfile : Profile
 
         //mapeamento dos requests que vem da api
         CreateMap<CreateUserRequest, Usuario>();
+        CreateMap<Usuario, CreateUserRequest>();
+
+
         CreateMap<UpdateUserRequest, Usuario>();
         CreateMap<DeleteUserRequest, Usuario>();
         CreateMap<GetUserByIdRequest, Usuario>();
         CreateMap<GetAllRequest, Usuario>();
 
-        CreateMap<CreateContactRequest, Contato>();  
+        CreateMap<CreateContactRequest, Contato>().ForMember(dest => dest.Ddd, opt => opt.Ignore())
+    .ForMember(dest => dest.TipoTelefone, opt => opt.Ignore())
+    .ForMember(dest => dest.Usuario, opt => opt.Ignore());
+
         CreateMap<UpdateContactRequest, Contato>();
         CreateMap<DeleteContactRequest, Contato>();
         CreateMap<GetByIdContactRequest, Contato>();
@@ -63,6 +69,8 @@ public class MappingProfile : Profile
         CreateMap<Contato, DeleteContatoDto>();
         CreateMap<Contato, GetByIdContatoDto>();
         CreateMap<Contato, GetAllContatoDto>();
+        
+        
 
 
         CreateMap<Regiao, CreateRegiaoDto>();
@@ -77,8 +85,8 @@ public class MappingProfile : Profile
         CreateMap<DDD, DeleteDDDDto>();
         CreateMap<DDD, GetAllDDDDto>();
         CreateMap<DDD, GetByIdRoleDto>();
-
-
+        CreateMap<DDD, GetByIdDDDDto>();
+        CreateMap<GetByIdDDDDto, DDD>();
 
         CreateMap<Role, CreateRoleDto>();
         CreateMap<Role, UpdateRoleDto>();

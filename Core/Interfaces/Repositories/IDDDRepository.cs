@@ -9,4 +9,5 @@ namespace Core.Interfaces.Repositories;
 
 public interface IDDDRepository : IRepository<DDD>
 {
+    
 }

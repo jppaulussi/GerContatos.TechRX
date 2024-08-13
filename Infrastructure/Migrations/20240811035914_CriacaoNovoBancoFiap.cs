@@ -5,24 +5,23 @@
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class configBdJp : Migration
+    public partial class CriacaoNovoBancoFiap : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-
             migrationBuilder.CreateTable(
-    name: "Papel",
-    columns: table => new
-    {
-        Id = table.Column<int>(type: "int", nullable: false)
-            .Annotation("SqlServer:Identity", "1, 1"),
-        Tipo = table.Column<string>(type: "NVARCHAR(80)", maxLength: 80, nullable: false)
-    },
-    constraints: table =>
-    {
-        table.PrimaryKey("PK_Papel", x => x.Id);
-    });
+                name: "Papel",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Tipo = table.Column<string>(type: "NVARCHAR(80)", maxLength: 80, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Papel", x => x.Id);
+                });
 
             migrationBuilder.CreateTable(
                 name: "Regiao",
@@ -101,7 +100,7 @@ namespace Infrastructure.Migrations
                     Nome = table.Column<string>(type: "NVARCHAR(150)", maxLength: 150, nullable: false),
                     Telefone = table.Column<string>(type: "NVARCHAR(9)", maxLength: 9, nullable: false),
                     Email = table.Column<string>(type: "NVARCHAR(150)", maxLength: 150, nullable: false),
-                    RegiaoId = table.Column<int>(type: "int", nullable: false),
+                    DDDId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
                     TipoTelefoneId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -109,9 +108,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Contato", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Contato_Regiao_RegiaoId",
-                        column: x => x.RegiaoId,
-                        principalTable: "Regiao",
+                        name: "FK_Contato_DDD_DDDId",
+                        column: x => x.DDDId,
+                        principalTable: "DDD",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -129,9 +128,9 @@ namespace Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Contato_RegiaoId",
+                name: "IX_Contato_DDDId",
                 table: "Contato",
-                column: "RegiaoId");
+                column: "DDDId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Contato_TipoTelefoneId",
@@ -158,7 +157,7 @@ namespace Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-               name: "Contato");
+                name: "Contato");
 
             migrationBuilder.DropTable(
                 name: "DDD");

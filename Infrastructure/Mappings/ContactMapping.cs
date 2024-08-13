@@ -31,9 +31,9 @@ public class ContactMapping : IEntityTypeConfiguration<Contato>
             .HasMaxLength(9);
 
 
-        builder.HasOne(c => c.Regiao)
+        builder.HasOne(c => c.Ddd)
             .WithMany(r => r.Contatos)
-            .HasForeignKey(c => c.RegiaoId);
+            .HasForeignKey(c => c.DDDId);
 
         builder.HasOne(c => c.Usuario)
            .WithMany(u => u.Contatos)

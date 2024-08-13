@@ -15,12 +15,10 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var configuration = new ConfigurationBuilder()
-    .AddJsonFile("appsettings.json")
-    .Build();
-
+// Aqui, use o builder.Configuration em vez de criar um novo ConfigurationBuilder.
 builder.Services.AddDbContext<AppDbContext>(options =>
-           options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+           options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 
 
@@ -30,7 +28,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IContatoRepository, ContatoRepository>();
 builder.Services.AddScoped<IDDDRepository, DDDRepository>();
-builder.Services.AddScoped<IRegiaoService, RegiaoService>();
+builder.Services.AddScoped<IRegiaoRepository, RegiaoRepository>();
 builder.Services.AddScoped<IRoleRepository, RoleRepository>();
 builder.Services.AddScoped<ITipoTelefoneRepository, TipoTelefoneRepository>();
 // registra services to the container.E
@@ -48,7 +46,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
 
-var key = Encoding.ASCII.GetBytes(configuration.GetValue<string>("SecretJWT")!);
+var key = Encoding.ASCII.GetBytes(builder.Configuration["SecretJWT"]!);
 
 builder.Services.AddAuthentication(x =>
 {

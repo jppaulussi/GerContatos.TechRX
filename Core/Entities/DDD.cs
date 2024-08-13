@@ -11,4 +11,7 @@ public class DDD : EntityBase
     public string CodigoDDD { get; set; } = string.Empty;
     public int RegiaoId { get; set; }
     public  Regiao Regiao { get; set; }
+    public ICollection<Contato> Contatos { get; set; }
+
+
 }

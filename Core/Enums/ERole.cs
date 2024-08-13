@@ -9,7 +9,7 @@ namespace Core.Enums;
 
 public enum ERole
 {
-    [Description("Administrator")]
+    [Description("Administrador")]
     Administrador = 1,
 
     [Description("Usuario")]

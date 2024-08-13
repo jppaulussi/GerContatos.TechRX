@@ -50,6 +50,7 @@ namespace GerContatos.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetById(int id)
         {
             var response = await _regiaoService.GetById(id);
@@ -64,6 +65,7 @@ namespace GerContatos.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll()
         {
             var response = await _regiaoService.GetAll();
