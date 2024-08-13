@@ -30,7 +30,7 @@ namespace GerContatos.API.Controllers
         }
         
         [HttpPost]
-        [Authorize(Roles = PermissaoSistema.Administrador)]
+        //[Authorize(Roles = PermissaoSistema.Administrador)]
         public async Task<IActionResult> CreateUser([FromBody]CreateUserRequest request)
         {
             try

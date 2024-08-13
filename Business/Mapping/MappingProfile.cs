@@ -69,18 +69,19 @@ public class MappingProfile : Profile
         CreateMap<Contato, DeleteContatoDto>();
         CreateMap<Contato, GetByIdContatoDto>();
         CreateMap<Contato, GetAllContatoDto>();
-        
-        
 
 
-        CreateMap<Regiao, CreateRegiaoDto>();
-        CreateMap<Regiao, UpdateRegiaoDto>();
-        CreateMap<Regiao, DeleteRegiaoDto>();
-        CreateMap<Regiao, GetAllRegiaoDto>();
-        CreateMap<Regiao, GetByIdRegiaoDto>();
+
+
+        CreateMap<Regiao, CreateRegiaoDto>().ReverseMap();
+        CreateMap<Regiao, UpdateRegiaoDto>().ReverseMap();
+        CreateMap<Regiao, DeleteRegiaoDto>().ReverseMap();
+        CreateMap<Regiao, GetAllRegiaoDto>().ReverseMap();
+        CreateMap<Regiao, GetByIdRegiaoDto>().ReverseMap();
 
 
         CreateMap<DDD, CreateDDDDto>();
+        CreateMap<CreateDDDDto, DDD>(); 
         CreateMap<DDD, UpdateDDDDto>();
         CreateMap<DDD, DeleteDDDDto>();
         CreateMap<DDD, GetAllDDDDto>();
