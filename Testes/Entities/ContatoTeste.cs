@@ -88,13 +88,19 @@ namespace Core.Tests.Entities
         public void Email_Validation_ShouldFail_WhenEmailIsInvalid()
         {
             // Arrange
-            _contato.Email = "invalid-email";
+            var contato = new Contato
+            {
+                Email = "invalid-email" // E-mail inválido
+            };
 
             // Act
-            var validationResults = ValidateModel(_contato);
+            var context = new ValidationContext(contato, serviceProvider: null, items: null);
+            var validationResults = new List<ValidationResult>();
+            var isValid = Validator.TryValidateObject(contato, context, validationResults, validateAllProperties: true);
 
             // Assert
-            Assert.IsTrue(validationResults.Any(v => v.ErrorMessage.Contains("The Email field is not a valid e-mail address")));
+            Assert.IsFalse(isValid, "A validação deve falhar para um e-mail inválido.");
+            Assert.IsTrue(validationResults.Any(vr => vr.ErrorMessage == "Formato de e-mail invalido"), "A mensagem de erro para o e-mail inválido está incorreta.");
         }
 
         private IList<ValidationResult> ValidateModel(object model)

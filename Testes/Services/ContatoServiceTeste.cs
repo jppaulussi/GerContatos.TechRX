@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Core.Dto.Contato;
 using Core.Dto.DDD;
-using Core.Dto.Regiao;
 using Core.Entities;
 using Core.Interfaces.Repositories;
 using Core.Interfaces.Services;
@@ -12,8 +11,6 @@ using NUnit.Framework;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-
-
 namespace Testes.Services
 {
     [TestFixture]
@@ -22,7 +19,6 @@ namespace Testes.Services
         private Mock<IContatoRepository> _mockContatoRepository;
         private Mock<IMapper> _mockMapper;
         private Mock<IDDDService> _mockDDDService;
-        private Mock<IRegiaoService> _mockRegiaoService;
         private ContatoService _contatoService;
 
         [SetUp]
@@ -31,13 +27,11 @@ namespace Testes.Services
             _mockContatoRepository = new Mock<IContatoRepository>();
             _mockMapper = new Mock<IMapper>();
             _mockDDDService = new Mock<IDDDService>();
-            _mockRegiaoService = new Mock<IRegiaoService>();
 
             _contatoService = new ContatoService(
                 _mockContatoRepository.Object,
                 _mockMapper.Object,
-                _mockDDDService.Object,
-                _mockRegiaoService.Object
+                _mockDDDService.Object
             );
         }
 
@@ -45,14 +39,11 @@ namespace Testes.Services
         public async Task Create_ShouldReturnSuccess_WhenValidDataIsProvided()
         {
             // Arrange
-            var contato = new Contato { RegiaoId = 1 };
-            var regiaoDto = new Response<GetByIdRegiaoDto?> { Data = new GetByIdRegiaoDto() };
+            var contato = new Contato { DDDId = 1 };
             var dddDto = new Response<GetByIdDDDDto?> { Data = new GetByIdDDDDto() };
             var contatoDto = new CreateContatoDto();
 
-            _mockRegiaoService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(regiaoDto);
             _mockDDDService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(dddDto);
-            _mockMapper.Setup(m => m.Map<Regiao>(regiaoDto.Data)).Returns(new Regiao());
             _mockMapper.Setup(m => m.Map<DDD>(dddDto.Data)).Returns(new DDD());
             _mockMapper.Setup(m => m.Map<CreateContatoDto>(It.IsAny<Contato>())).Returns(contatoDto);
             _mockContatoRepository.Setup(r => r.Create(It.IsAny<Contato>())).Returns(Task.CompletedTask);
@@ -77,7 +68,7 @@ namespace Testes.Services
             var result = await _contatoService.Delete(contatoId);
 
             // Assert
-            Assert.AreEqual("Contato Excluido com Sucesso", result.Message);
+            Assert.AreEqual("Contato Excluido com Sucesso", result.Message); // Ajuste para mensagem real
         }
 
         [Test]
@@ -113,7 +104,6 @@ namespace Testes.Services
             var result = await _contatoService.GetById(contatoId);
 
             // Assert
-            
             Assert.AreEqual(contatoDto, result.Data);
         }
 
@@ -121,24 +111,21 @@ namespace Testes.Services
         public async Task Update_ShouldReturnSuccess_WhenValidDataIsProvided()
         {
             // Arrange
-            var contato = new Contato { RegiaoId = 1 };
-            var regiaoDto = new Response<GetByIdRegiaoDto?> { Data = new GetByIdRegiaoDto() };
+            var contato = new Contato { DDDId = 1 };
             var dddDto = new Response<GetByIdDDDDto?> { Data = new GetByIdDDDDto() };
-            var contatoDto = new CreateContatoDto();
+            var contatoDto = new UpdateContatoDto();
 
-            _mockRegiaoService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(regiaoDto);
             _mockDDDService.Setup(s => s.GetById(It.IsAny<int>())).ReturnsAsync(dddDto);
-            _mockMapper.Setup(m => m.Map<Regiao>(regiaoDto.Data)).Returns(new Regiao());
             _mockMapper.Setup(m => m.Map<DDD>(dddDto.Data)).Returns(new DDD());
-            _mockMapper.Setup(m => m.Map<CreateContatoDto>(It.IsAny<Contato>())).Returns(contatoDto);
-            _mockContatoRepository.Setup(r => r.Create(It.IsAny<Contato>())).Returns(Task.CompletedTask);
+            _mockMapper.Setup(m => m.Map<UpdateContatoDto>(It.IsAny<Contato>())).Returns(contatoDto);
+            _mockContatoRepository.Setup(r => r.Update(It.IsAny<Contato>())).Returns(Task.CompletedTask);
 
             // Act
             var result = await _contatoService.Update(contato);
 
             // Assert
-            Assert.AreEqual("Contato criado com sucesso", result.Message);
-          
+            Assert.AreEqual("Contato criado com sucesso", result.Message); // Ajuste para mensagem real
+            Assert.AreEqual(contatoDto, result.Data);
         }
     }
 }
