@@ -80,6 +80,10 @@ jobs:
     - name: Execute unit tests
       run: dotnet test
 
+    - name: Testes de Integração 
+      run: dotnet teste <Testes/Services/ContatoServiceTeste.cs>
+    
+
     # Restore the application to populate the obj folder with RuntimeIdentifiers
     - name: Restore the application
       run: msbuild $env:Solution_Name /t:Restore /p:Configuration=$env:Configuration
