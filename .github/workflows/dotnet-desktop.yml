@@ -81,7 +81,7 @@ jobs:
       run: dotnet test
 
     - name: Testes de Integração 
-      run: dotnet teste <Testes/Services/ContatoServiceTeste.cs>
+      run: dotnet teste Testes/Services/ContatoServiceTeste.cs
     
 
     # Restore the application to populate the obj folder with RuntimeIdentifiers
