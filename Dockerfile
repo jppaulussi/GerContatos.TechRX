@@ -1,6 +1,6 @@
 # Use uma imagem base oficial do .NET SDK
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
-WORKDIR /app
+WORKDIR /GerContatos.TechRX
 
 # Copie o arquivo .csproj e restaure as dependências
 COPY GerContatos.API/GerContatos.API.csproj ./GerContatos.API/
