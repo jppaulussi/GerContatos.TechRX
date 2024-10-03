@@ -1,32 +1,21 @@
-# Use uma imagem base oficial do .NET SDK
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+# Usar uma imagem base do .NET SDK para compilar a aplicação
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copie todos os arquivos de projeto para o contêiner
-COPY GerContatos.API/GerContatos.API.csproj ./GerContatos.API/
-COPY Business/Business.csproj ./Business/
-COPY Core/Core.csproj ./Core/
-COPY Infrastructure/Infrastructure.csproj ./Infrastructure/
+# Copiar o csproj e restaurar as dependências
+COPY *.sln .
+COPY *.csproj .
+RUN dotnet restore
 
-# Restaure as dependências
-RUN dotnet restore ./GerContatos.API/GerContatos.API.csproj
-
-# Copie o restante dos arquivos do projeto
+# Copiar o restante dos arquivos e compilar a aplicação
 COPY . .
+RUN dotnet publish -c Release -o out
 
-# Defina o diretório de trabalho para o projeto GerContatos.API
-WORKDIR /app/GerContatos.API
-
-# Faça o build da aplicação, especificando o arquivo .csproj
-RUN dotnet publish ./GerContatos.API.csproj -c Release -o out
-
-# Use uma imagem do .NET Runtime para rodar a aplicação
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# Criar a imagem final usando a imagem do .NET Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
-COPY --from=build-env /app/GerContatos.API/out .
+COPY --from=build /app/out .
 
-# Exponha a porta que a aplicação vai usar
+# Expor a porta da aplicação
 EXPOSE 80
-
-# Comando de entrada
 ENTRYPOINT ["dotnet", "GerContatos.API.dll"]
