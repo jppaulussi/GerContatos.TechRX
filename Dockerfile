@@ -10,8 +10,8 @@ RUN dotnet restore ./GerContatos.API/GerContatos.API.csproj
 COPY . ./GerContatos.API/
 WORKDIR /app/GerContatos.API
 
-# Faça o build da aplicação
-RUN dotnet publish -c Release -o out
+# Faça o build da aplicação, especificando o arquivo .csproj
+RUN dotnet publish ./GerContatos.API.csproj -c Release -o out
 
 # Use uma imagem do .NET Runtime para rodar a aplicação
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
