@@ -2,17 +2,26 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /app
 
-# Copiar o csproj e restaurar as dependências
-COPY *.sln .
-COPY *.csproj .
+# Copiar a solução e todos os projetos
+COPY GerContatos.TechRX.sln ./
+COPY Business/Business.csproj Business/
+COPY Core/Core.csproj Core/
+COPY Infrastructure/Infrastructure.csproj Infrastructure/
+COPY Model/Model.csproj Model/
+COPY GerContatos.API/GerContatos.API.csproj GerContatos.API/
+COPY Testes/Testes.csproj Testes/
+
+# Restaurar as dependências
 RUN dotnet restore
 
 # Copiar o restante dos arquivos e compilar a aplicação
 COPY . .
-RUN dotnet publish -c Release -o out
+
+# Compilar a aplicação
+RUN dotnet publish GerContatos.API/GerContatos.API.csproj -c Release -o out
 
 # Criar a imagem final usando a imagem do .NET Runtime
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/out .
 
