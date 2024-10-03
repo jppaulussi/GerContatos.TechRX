@@ -1,0 +1,5 @@
+volumes:
+  - ./server:/app  # Monta seu código local dentro do container
+  - /app/obj/      # Mantém o diretório obj dentro do container
+  - /app/bin/      # Mantém o diretório bin dentro do container
+  - /app/out/      # Mantém o diretório out dentro do container
