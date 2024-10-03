@@ -2,12 +2,19 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
 WORKDIR /app
 
-# Copie o arquivo .csproj e restaure as dependências
+# Copie todos os arquivos de projeto para o contêiner
 COPY GerContatos.API/GerContatos.API.csproj ./GerContatos.API/
+COPY Business/Business.csproj ./Business/
+COPY Core/Core.csproj ./Core/
+COPY Infrastructure/Infrastructure.csproj ./Infrastructure/
+
+# Restaure as dependências
 RUN dotnet restore ./GerContatos.API/GerContatos.API.csproj
 
-# Copie todo o restante dos arquivos do projeto
-COPY . ./GerContatos.API/
+# Copie o restante dos arquivos do projeto
+COPY . .
+
+# Defina o diretório de trabalho para o projeto GerContatos.API
 WORKDIR /app/GerContatos.API
 
 # Faça o build da aplicação, especificando o arquivo .csproj
