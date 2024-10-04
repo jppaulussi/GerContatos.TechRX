@@ -111,13 +111,22 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
+app.Urls.Add("http://+:5046");
+
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+/*if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+*/
 
+app.UseSwagger();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+    c.RoutePrefix = string.Empty; // Para acessar na raiz
+});
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

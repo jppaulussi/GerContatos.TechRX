@@ -25,6 +25,9 @@ FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/out .
 
+# Definir a URL da aplicação para escutar na porta 5046
+ENV ASPNETCORE_URLS=http://+:5046
+
 # Expor a porta da aplicação
-EXPOSE 80
+EXPOSE 5046
 ENTRYPOINT ["dotnet", "GerContatos.API.dll"]
