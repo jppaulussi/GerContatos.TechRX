@@ -121,7 +121,7 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-app.Urls.Add("http://+:5046");
+//app.Urls.Add("http://+:5046");
 
 // Habilite o CORS
 app.UseCors("AllowAllOrigins"); // Aplicando a política de CORS

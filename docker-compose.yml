@@ -6,11 +6,10 @@ services:
     container_name: sqlserver
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=FiapTechx@SenhaForte
+      - MSSQL_SA_PASSWORD=fiapPASSWORD123
+      - MSSQL_PID=Developer
     ports:
       - "1433:1433"
-    volumes:
-      - sqlvolume:/var/opt/mssql
     networks:
       - sqlnet
     restart: always
