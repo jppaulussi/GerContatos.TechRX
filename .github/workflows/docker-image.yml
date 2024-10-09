@@ -13,6 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - uses: docker/compose-action@v2
+      with:
+        docker-compose-version: 'latest'
+
     - name: Build the Docker image API
       run: docker build . --file Dockerfile --tag my-image-api:latest
 
