@@ -13,16 +13,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Docker Compose
-      run: |
-        sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-        sudo chmod +x /usr/local/bin/docker-compose
+    - uses: docker/compose-action@v2
+      with:
+        docker-compose-version: 'latest'
 
     - name: Build the Docker image API
       run: docker build . --file Dockerfile --tag my-image-api:latest
 
-    - name: Build the Docker image Database
-      run: docker build . --file path/to/DatabaseDockerfile --tag my-image-db:latest
+    - name: Start Database with Docker Compose
+      run: docker-compose -f docker-compose.yml up -d
 
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
