@@ -7,14 +7,14 @@ on:
     branches: [ "main" ]
 
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v4
+
     - name: Build the Docker image API
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-    - name: Build the Docker image Banco de Dados
-      run: docker build . --file docker-compose --tag my-image-name:$(date +%s)
+      run: docker build . --file Dockerfile --tag my-image-api:latest
+
+    - name: Start Database with Docker Compose
+      run: docker-compose -f docker-compose.yml up -d
