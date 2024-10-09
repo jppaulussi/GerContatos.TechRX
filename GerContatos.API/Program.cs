@@ -21,6 +21,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
            options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+// Configuração de CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins", builder =>
+    {
+        builder.AllowAnyOrigin()  // Permite qualquer origem
+               .AllowAnyMethod()  // Permite qualquer método (GET, POST, etc.)
+               .AllowAnyHeader(); // Permite qualquer cabeçalho
+    });
+});
 
 
 // Registra os repositórios
@@ -111,7 +121,10 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-app.Urls.Add("http://+:5046");
+//app.Urls.Add("http://+:5046");
+
+// Habilite o CORS
+app.UseCors("AllowAllOrigins"); // Aplicando a política de CORS
 
 // Configure the HTTP request pipeline.
 /*if (app.Environment.IsDevelopment())

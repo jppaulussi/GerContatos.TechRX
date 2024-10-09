@@ -1,5 +1,21 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=fiapPASSWORD123
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    networks:
+      - sqlnet
+    restart: always
+
 volumes:
-  - ./server:/app  # Monta seu código local dentro do container
-  - /app/obj/      # Mantém o diretório obj dentro do container
-  - /app/bin/      # Mantém o diretório bin dentro do container
-  - /app/out/      # Mantém o diretório out dentro do container
+  sqlvolume:
+
+networks:
+  sqlnet:
