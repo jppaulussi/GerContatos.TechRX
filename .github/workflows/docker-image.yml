@@ -21,19 +21,15 @@ jobs:
       run: docker build . --file Dockerfile --tag my-image-api:latest
 
     - name: Start Database with Docker Compose
-      run: docker-compose -f docker-compose.yml up -d --tag my-image-db:latest
+      run: docker-compose -f docker-compose.yml up -d 
 
     - name: Log in to Docker Hub
       run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
     - name: Tag API Image for Docker Hub
       run: docker tag my-image-api:latest ${{ secrets.DOCKER_HUB_USERNAME }}/my-image-api:latest
-
-    - name: Tag Database Image for Docker Hub
-      run: docker tag my-image-db:latest ${{ secrets.DOCKER_HUB_USERNAME }}/my-image-db:latest
-
+      
     - name: Push API Image to Docker Hub
       run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-image-api:latest
 
-    - name: Push Database Image to Docker Hub
-      run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-image-db:latest
+
