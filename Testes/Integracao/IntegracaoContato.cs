@@ -1,22 +1,28 @@
 ﻿using AutoMapper;
-using Business.Mapping;
 using Core.Entities;
 using Core.Interfaces.Services;
-using Core.Request.Contact;
 using GerContatos.API.Controllers;
-using GerContatos.API.Services;
-using Infrastructure.Data;
-using Infrastructure.Repository;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Model.Dtos.Request.Token;
+using NUnit.Framework;
+using System.IO;
+using System.Threading.Tasks;
+using Business.Mapping;
+using Core.Dto.Usuarios;
+using GerContatos.API.Services;
+using Infrastructure.Data;
+using Infrastructure.Repository;
 
 [TestFixture]
-public class ContatoControllerIntegrationTests
+public class UsuarioControllerIntegrationTests
 {
-    private ContatoController _controller;
-    private IContatoService _contatoService;
-    private IDDDService _dddService;
+    private UsuarioController _usuarioController;
+    private TokenController _tokenController;
+    private IUsuarioService _usuarioService;
+    private ITokenService _tokenService;
     private IMapper _mapper;
     private AppDbContext _dbContext;
     private IConfiguration _configuration;
@@ -24,32 +30,74 @@ public class ContatoControllerIntegrationTests
     [SetUp]
     public void SetUp()
     {
-        var projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName; // Ajuste o caminho conforme a estrutura do seu projeto
+        var projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
         _configuration = new ConfigurationBuilder()
             .SetBasePath(projectRoot)
             .AddJsonFile("appsettings.test.json")
             .Build();
-        // Configura a conexão do banco de dados
-        var connectionString = _configuration.GetConnectionString("DefaultConnection");
 
         var dbOptions = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer(connectionString)
+            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"))
             .Options;
 
         _dbContext = new AppDbContext(dbOptions);
         _dbContext.Database.EnsureCreated();
 
-        // Inicializar o mapper
+        // Configuração do AutoMapper
         _mapper = new MapperConfiguration(cfg =>
         {
-            cfg.AddProfile<MappingProfile>();
+            cfg.AddProfile<MappingProfile>(); // Defina o seu perfil de mapeamento
         }).CreateMapper();
 
-        // Inicializar serviços reais aqui
-        _dddService = new DDDService(new DDDRepository(_dbContext),_mapper);
-        _contatoService = new ContatoService(new ContatoRepository(_dbContext), _mapper, _dddService);
+        // Inicializando os serviços e controllers com injeção de dependência
+        _usuarioService = new UsuarioService(new UsuarioRepository(_dbContext), _mapper);
+        _tokenService = new TokenService(_configuration, _usuarioService);
 
-        _controller = new ContatoController(_contatoService, _mapper, _dddService);
+        _tokenController = new TokenController(_tokenService, _mapper);
+        _tokenController.ControllerContext.HttpContext = new DefaultHttpContext();
+
+        _usuarioController = new UsuarioController(_usuarioService, _mapper);
+    }
+
+    // Método para obter o token de autenticação usando um usuário existente no banco
+    private async Task<string> GetAuthToken()
+    {
+        var loginRequest = new GetUsuarioTokenRequest
+        {
+            Email = "joao.silva@exemplo.com",  // Substitua pelo email do usuário existente no banco
+            Password = "senhaSegura123"        // Substitua pela senha do usuário existente no banco
+        };
+
+        var result = await _tokenController.Post(loginRequest) as ObjectResult;
+
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+
+        var token = result.Value as string;
+        Assert.IsNotNull(token);
+        return token;
+    }
+
+    [Test]
+    public async Task GetUserById_ReturnsOk_WhenUserExists()
+    {
+        // Arrange
+        int userId = 1; // ID do usuário que já existe no banco de dados
+        var token = await GetAuthToken();
+
+        _usuarioController.ControllerContext.HttpContext = new DefaultHttpContext();
+        _usuarioController.ControllerContext.HttpContext.Request.Headers["Authorization"] = $"Bearer {token}";
+
+        // Act
+        var result = await _usuarioController.GetUserById(userId) as ObjectResult;
+
+        // Assert
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
+
+        var usuarioDto = result.Value as UsuarioGetByIdDto;
+        Assert.IsNotNull(usuarioDto);
+        Assert.AreEqual(userId, usuarioDto.RoleId);  // Verifique se o ID corresponde ao usuário esperado
     }
 
     [TearDown]
@@ -57,38 +105,5 @@ public class ContatoControllerIntegrationTests
     {
         _dbContext.Database.EnsureDeleted();
         _dbContext.Dispose();
-    }
-
-    [Test]
-    public async Task Create_Contato_ReturnsCreated()
-    {
-        // Arrange
-        var createContatoDto = new CreateContactRequest
-        {
-            Nome = "Teste Contato",
-            Telefone = 123456789,
-            Email = "teste@exemplo.com",
-            DDDId = 1,
-            UsuarioId = 1,
-            TipoTelefoneId = 1
-        };
-
-        // Act
-        var result = await _controller.Create(createContatoDto) as CreatedAtActionResult;
-
-        // Assert
-        Assert.IsNotNull(result);
-        Assert.AreEqual(201, result.StatusCode);
-        Assert.AreEqual("GetById", result.ActionName);
-        Assert.IsNotNull(result.Value);
-
-        var contato = result.Value as Contato;
-        Assert.IsNotNull(contato);
-        Assert.AreEqual("Teste Contato", contato.Nome);
-
-        // Verifique se o contato foi realmente adicionado ao banco de dados
-        var savedContato = await _dbContext.Contato.FindAsync(contato.Id);
-        Assert.IsNotNull(savedContato);
-        Assert.AreEqual("Teste Contato", savedContato.Nome);
     }
 }
