@@ -54,23 +54,7 @@ public class UsuarioControllerIntegrationTests
 
         _usuarioController = new UsuarioController(_usuarioService, _mapper);
 
-        // Inserindo um papel para o usuário
-        var papel = new Role
-        {
-            Tipo = Core.Enums.ERole.Administrador // Definindo um papel
-        };
-        _dbContext.Add(papel);
-        await _dbContext.SaveChangesAsync();
-
-        // Inserindo um usuário para autenticação
-        var usuario = new Usuario
-        {
-            Email = "joao.silva@exemplo.com",
-            Password = "senhaSegura123", // Ajuste o hash conforme necessário
-            RoleId = papel.Id // Usando o ID do papel inserido
-        };
-        _dbContext.Usuario.Add(usuario);
-        await _dbContext.SaveChangesAsync();
+        // Não inserindo dados aqui, mas garantindo que o usuário existe
     }
 
     // Método para obter o token de autenticação usando um usuário existente no banco
@@ -112,6 +96,8 @@ public class UsuarioControllerIntegrationTests
         var usuarioDto = result.Value as UsuarioGetByIdDto;
         Assert.IsNotNull(usuarioDto);
         Assert.AreEqual(userId, usuarioDto.RoleId);  // Verifique se o ID corresponde ao usuário esperado
+        Assert.AreEqual("joao.silva@exemplo.com", usuarioDto.Email); // Verificando se o email é igual ao esperado
+        
     }
 
     [TearDown]
