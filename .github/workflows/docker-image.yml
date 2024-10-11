@@ -101,6 +101,17 @@ jobs:
             sleep 2
           done
 
+      - name: Display Database Structure and Data
+        run: |
+          echo "Displaying tables in TestDb database:"
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb -Q "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES;"
+
+          echo "Displaying contents of Papel table:"
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb -Q "SELECT * FROM Papel;"
+
+          echo "Displaying contents of Usuario table:"
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb -Q "SELECT * FROM Usuario;"
+
       - name: Run tests
         env:
           ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!"
