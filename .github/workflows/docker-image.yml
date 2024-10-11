@@ -20,6 +20,7 @@ jobs:
           - 1433:1433
         options: > 
           --network-alias sqlserver
+
     steps:
       - uses: actions/checkout@v4
 
@@ -27,6 +28,7 @@ jobs:
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
+
       - name: Build the Docker image API
         run: docker build . --file Dockerfile --tag my-image-api:latest
 
@@ -39,14 +41,13 @@ jobs:
             echo 'SQL Server is starting...'
             sleep 1
           done
-          
+
       - name: Run tests
         env:
           ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!" 
         run: |
-          dotnet restore Testes/Testes.csproj 
-          dotnet test Testes/Integracao/IntegracaoContato.cs --logger "trx;LogFileName=test_results.trx"
-
+          dotnet restore Testes/Testes.csproj  # Garante que as dependências estão atualizadas
+          dotnet test Testes/Testes.csproj --logger "trx;LogFileName=test_results.trx"  # Executa todos os testes do projeto de testes
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
