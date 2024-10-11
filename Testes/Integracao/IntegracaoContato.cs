@@ -97,7 +97,7 @@ public class UsuarioControllerIntegrationTests
 
         var usuarioDto = result.Value as UsuarioGetByIdDto;
         Assert.IsNotNull(usuarioDto);
-        Assert.AreEqual(userId, usuarioDto.Id);  // Verifique se o ID corresponde ao usuário esperado
+        Assert.AreEqual(userId, usuarioDto.RoleId);  // Verifique se o ID corresponde ao usuário esperado
     }
 
     [TearDown]
