@@ -35,24 +35,25 @@ jobs:
       - name: Build the Docker image API
         run: docker build . --file Dockerfile --tag my-image-api:latest
 
-      - name: Wait for SQL Server to be ready
-        run: |
-          for i in {30..0}; do
-            if echo 'SELECT 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' > /dev/null; then
-              break
-            fi
-            echo 'SQL Server is starting...'
-            sleep 1
-          done
-
       - name: Create appsettings.json
         run: |
           mkdir -p Infrastructure  # Cria o diretório, se não existir
           echo '{
             "ConnectionStrings": {
-              "DefaultConnection": "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!"
+              "DefaultConnection": "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True"
             }
           }' > Infrastructure/appsettings.json
+
+      - name: Wait for SQL Server to be ready
+        run: |
+          for i in {30..0}; do
+            if echo 'SELECT 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' > /dev/null; then
+              echo 'SQL Server is ready!'
+              break
+            fi
+            echo 'SQL Server is starting...'
+            sleep 2  # Aumenta o tempo de espera
+          done
 
       - name: Create and apply database migrations
         run: |
