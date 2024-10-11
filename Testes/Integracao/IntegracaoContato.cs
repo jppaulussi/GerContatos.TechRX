@@ -82,7 +82,7 @@ public class UsuarioControllerIntegrationTests
     public async Task GetUserById_ReturnsOk_WhenUserExists()
     {
         // Arrange
-        int userId = 2; // ID do usuário que já existe no banco de dados
+        int userId = 1; // ID do usuário que já existe no banco de dados
         var token = await GetAuthToken();
 
         _usuarioController.ControllerContext.HttpContext = new DefaultHttpContext();
