@@ -60,6 +60,13 @@ jobs:
           export PATH="$PATH:$HOME/.dotnet/tools"  # Adiciona o caminho das ferramentas dotnet ao PATH
           dotnet ef database update --project Infrastructure
 
+      - name: Install mssql-tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mssql-tools unixodbc-dev
+          echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc
+          source ~/.bashrc
+
       - name: Insert initial data into the database
         run: |
           echo 'INSERT INTO Papel (Tipo) VALUES ("Administrador"), ("Usuario");' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb
