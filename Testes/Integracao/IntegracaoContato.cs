@@ -31,11 +31,14 @@ public class UsuarioControllerIntegrationTests
     public async Task SetUp()
     {
         var dbOptions = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer("Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True;")
-            .Options;
+              .UseSqlServer("Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True;")
+              .Options;
 
         _dbContext = new AppDbContext(dbOptions);
+
+        // Certifique-se de que o banco de dados é criado e aplicado as migrações
         await _dbContext.Database.EnsureCreatedAsync();
+        await _dbContext.Database.MigrateAsync();  // Aplicar as migrações se estiver usando EF Core
 
         // Configuração do AutoMapper
         _mapper = new MapperConfiguration(cfg =>
