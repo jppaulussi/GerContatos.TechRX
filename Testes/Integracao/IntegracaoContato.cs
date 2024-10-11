@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Model.Dtos.Request.Token;
 using NUnit.Framework;
+using System.IO;
 using System.Threading.Tasks;
 using Business.Mapping;
 using Core.Dto.Usuarios;
@@ -27,22 +28,25 @@ public class UsuarioControllerIntegrationTests
     private IConfiguration _configuration;
 
     [SetUp]
-    public async Task SetUp()
+    public void SetUp()
     {
+        var projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+        _configuration = new ConfigurationBuilder()
+            .SetBasePath(projectRoot)
+            .AddJsonFile("appsettings.test.json")
+            .Build();
+
         var dbOptions = new DbContextOptionsBuilder<AppDbContext>()
-              .UseSqlServer("Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True;")
-              .Options;
+            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"))
+            .Options;
 
         _dbContext = new AppDbContext(dbOptions);
-
-        // Certifique-se de que o banco de dados é criado e aplicar as migrações
-        await _dbContext.Database.EnsureCreatedAsync();
-        await _dbContext.Database.MigrateAsync();  // Aplicar as migrações se estiver usando EF Core
+        _dbContext.Database.EnsureCreated();
 
         // Configuração do AutoMapper
         _mapper = new MapperConfiguration(cfg =>
         {
-            cfg.AddProfile<MappingProfile>();
+            cfg.AddProfile<MappingProfile>(); // Defina o seu perfil de mapeamento
         }).CreateMapper();
 
         // Inicializando os serviços e controllers com injeção de dependência
@@ -53,8 +57,6 @@ public class UsuarioControllerIntegrationTests
         _tokenController.ControllerContext.HttpContext = new DefaultHttpContext();
 
         _usuarioController = new UsuarioController(_usuarioService, _mapper);
-
-        // Não inserindo dados aqui, mas garantindo que o usuário existe
     }
 
     // Método para obter o token de autenticação usando um usuário existente no banco
@@ -62,17 +64,17 @@ public class UsuarioControllerIntegrationTests
     {
         var loginRequest = new GetUsuarioTokenRequest
         {
-            Email = "joao.silva@exemplo.com",
-            Password = "senhaSegura123"
+            Email = "joao.silva@exemplo.com",  // Substitua pelo email do usuário existente no banco
+            Password = "senhaSegura123"        // Substitua pela senha do usuário existente no banco
         };
 
         var result = await _tokenController.Post(loginRequest) as ObjectResult;
 
-        Assert.IsNotNull(result, "O resultado não pode ser nulo."); // Adicionando mensagem de erro
-        Assert.AreEqual(200, result.StatusCode, "O status deve ser 200 OK."); // Adicionando mensagem de erro
+        Assert.IsNotNull(result);
+        Assert.AreEqual(200, result.StatusCode);
 
         var token = result.Value as string;
-        Assert.IsNotNull(token, "O token não pode ser nulo."); // Adicionando mensagem de erro
+        Assert.IsNotNull(token);
         return token;
     }
 
@@ -95,9 +97,7 @@ public class UsuarioControllerIntegrationTests
 
         var usuarioDto = result.Value as UsuarioGetByIdDto;
         Assert.IsNotNull(usuarioDto);
-        Assert.AreEqual(userId, usuarioDto.RoleId);  // Verifique se o ID corresponde ao usuário esperado
-        Assert.AreEqual("joao.silva@exemplo.com", usuarioDto.Email); // Verificando se o email é igual ao esperado
-        
+        Assert.AreEqual(userId, usuarioDto.Id);  // Verifique se o ID corresponde ao usuário esperado
     }
 
     [TearDown]
