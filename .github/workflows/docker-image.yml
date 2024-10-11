@@ -44,4 +44,48 @@ jobs:
             }
           }' > Infrastructure/appsettings.json
 
-      - name
+      - name: Wait for SQL Server to be ready
+        run: |
+          for i in {30..0}; do
+            if echo 'SELECT 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' > /dev/null; then
+              echo 'SQL Server is ready!'
+              break
+            fi
+            echo 'SQL Server is starting...'
+            sleep 2
+          done
+
+      - name: Create initial data SQL file
+        run: |
+          echo 'USE TestDb;
+          INSERT INTO Papel (Tipo) VALUES (''Administrador''), (''Usuario'');
+          INSERT INTO Regiao (Name) VALUES (''Regiao 1''), (''Regiao 2'');
+          INSERT INTO TipoTelefone (Tipo) VALUES (''Celular''), (''Fixo'');
+          INSERT INTO Usuario (Name, Email, Password, RoleId) VALUES (''Usuario 1'', ''joao.silva@exemplo.com'', ''senha1'', 1);' > init.sql
+
+      - name: Insert initial data using SQL script
+        run: |
+          for i in {30..0}; do
+            if /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb -i init.sql > /dev/null; then
+              echo 'Data inserted successfully!'
+              break
+            fi
+            echo 'Waiting for SQL Server to be ready...'
+            sleep 2
+          done
+
+      - name: Run tests
+        env:
+          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!"
+        run: |
+          dotnet restore Testes/Testes.csproj
+          dotnet test Testes/Testes.csproj --logger "trx;LogFileName=test_results.trx"
+          
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
+
+      - name: Tag API Image for Docker Hub
+        run: docker tag my-image-api:latest ${{ secrets.DOCKER_HUB_USERNAME }}/my-image-api:latest
+        
+      - name: Push API Image to Docker Hub
+        run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-image-api:latest
