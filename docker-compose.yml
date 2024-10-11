@@ -13,6 +13,8 @@ services:
     networks:
       - sqlnet
     restart: always
+    volumes:
+      - sqlvolume:/var/opt/mssql
 
 volumes:
   sqlvolume:
