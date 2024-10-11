@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Model.Dtos.Request.Token;
 using NUnit.Framework;
-using System.IO;
 using System.Threading.Tasks;
 using Business.Mapping;
 using Core.Dto.Usuarios;
@@ -36,7 +35,7 @@ public class UsuarioControllerIntegrationTests
 
         _dbContext = new AppDbContext(dbOptions);
 
-        // Certifique-se de que o banco de dados é criado e aplicado as migrações
+        // Certifique-se de que o banco de dados é criado e aplicar as migrações
         await _dbContext.Database.EnsureCreatedAsync();
         await _dbContext.Database.MigrateAsync();  // Aplicar as migrações se estiver usando EF Core
 
@@ -55,12 +54,20 @@ public class UsuarioControllerIntegrationTests
 
         _usuarioController = new UsuarioController(_usuarioService, _mapper);
 
+        // Inserindo um papel para o usuário
+        var papel = new Role
+        {
+            Tipo = Core.Enums.ERole.Administrador // Definindo um papel
+        };
+        _dbContext.Add(papel);
+        await _dbContext.SaveChangesAsync();
+
         // Inserindo um usuário para autenticação
         var usuario = new Usuario
         {
             Email = "joao.silva@exemplo.com",
-            Password = "hashed_password_aqui", // Ajuste o hash conforme necessário
-            RoleId = 1
+            Password = "senhaSegura123", // Ajuste o hash conforme necessário
+            RoleId = papel.Id // Usando o ID do papel inserido
         };
         _dbContext.Usuario.Add(usuario);
         await _dbContext.SaveChangesAsync();
@@ -71,17 +78,17 @@ public class UsuarioControllerIntegrationTests
     {
         var loginRequest = new GetUsuarioTokenRequest
         {
-            Email = "joao.silva@exemplo.com",  // Substitua pelo email do usuário existente no banco
-            Password = "senhaSegura123"        // Substitua pela senha do usuário existente no banco
+            Email = "joao.silva@exemplo.com",
+            Password = "senhaSegura123"
         };
 
         var result = await _tokenController.Post(loginRequest) as ObjectResult;
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.IsNotNull(result, "O resultado não pode ser nulo."); // Adicionando mensagem de erro
+        Assert.AreEqual(200, result.StatusCode, "O status deve ser 200 OK."); // Adicionando mensagem de erro
 
         var token = result.Value as string;
-        Assert.IsNotNull(token);
+        Assert.IsNotNull(token, "O token não pode ser nulo."); // Adicionando mensagem de erro
         return token;
     }
 
@@ -89,7 +96,7 @@ public class UsuarioControllerIntegrationTests
     public async Task GetUserById_ReturnsOk_WhenUserExists()
     {
         // Arrange
-        int userId = 1; // ID do usuário que já existe no banco de dado
+        int userId = 1; // ID do usuário que já existe no banco de dados
         var token = await GetAuthToken();
 
         _usuarioController.ControllerContext.HttpContext = new DefaultHttpContext();
