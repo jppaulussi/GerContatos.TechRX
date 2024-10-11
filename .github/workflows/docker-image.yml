@@ -84,22 +84,11 @@ jobs:
         run: |
           dotnet ef database update --project GerContatos.API --connection "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True"
 
-      - name: Create initial data SQL file
+      - name: Insert initial data into Papel and Usuario tables
         run: |
-          echo 'USE TestDb;
-          INSERT INTO Papel (Tipo) VALUES (''Administrador'');
-          INSERT INTO Usuario (Name, Email, Password, RoleId) VALUES (''João Silva'', ''joao.silva@exemplo.com'', ''senhaSegura123'', 1);' > init.sql
-
-      - name: Insert initial data using SQL script
-        run: |
-          for i in {30..0}; do
-            if /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb -i "$(pwd)/init.sql" > /dev/null; then
-              echo 'Data inserted successfully!'
-              break
-            fi
-            echo 'Waiting for SQL Server to be ready...'
-            sleep 2
-          done
+          echo "Inserting data into Papel and Usuario tables..."
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb -Q "INSERT INTO Papel (Tipo) VALUES ('Administrador');"
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb -Q "INSERT INTO Usuario (Name, Email, Password, RoleId) VALUES ('João Silva', 'joao.silva@exemplo.com', 'senhaSegura123', 1);"
 
       - name: Display Database Structure and Data
         run: |
