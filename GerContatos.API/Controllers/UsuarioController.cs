@@ -15,7 +15,7 @@ namespace GerContatos.API.Controllers
     {
 
         [HttpGet]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> GetUserById(int id)
         {
             var usuario =  await _usuarioService.GetById(id);

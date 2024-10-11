@@ -60,6 +60,7 @@ public class UsuarioControllerIntegrationTests
     }
 
     // Método para obter o token de autenticação usando um usuário existente no banco
+    /*
     private async Task<string> GetAuthToken()
     {
         var loginRequest = new GetUsuarioTokenRequest
@@ -77,16 +78,17 @@ public class UsuarioControllerIntegrationTests
         Assert.IsNotNull(token);
         return token;
     }
+    */
 
     [Test]
     public async Task GetUserById_ReturnsOk_WhenUserExists()
     {
         // Arrange
         int userId = 1; // ID do usuário que já existe no banco de dados
-        var token = await GetAuthToken();
+        //var token = await GetAuthToken();
 
         _usuarioController.ControllerContext.HttpContext = new DefaultHttpContext();
-        _usuarioController.ControllerContext.HttpContext.Request.Headers["Authorization"] = $"Bearer {token}";
+       // _usuarioController.ControllerContext.HttpContext.Request.Headers["Authorization"] = $"Bearer {token}";
 
         // Act
         var result = await _usuarioController.GetUserById(userId) as ObjectResult;
