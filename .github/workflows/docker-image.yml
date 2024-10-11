@@ -62,11 +62,12 @@ jobs:
 
       - name: Install mssql-tools
         run: |
+  
           sudo apt-get update
           sudo apt-get install -y curl gnupg
-          curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
-          echo "deb [arch=amd64] https://packages.microsoft.com/repos/mssql-server-2019/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mssql-server.list
-          echo "deb [arch=amd64] https://packages.microsoft.com/repos/msql-tools/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/msql-tools.list
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
+          echo "deb [arch=amd64] https://packages.microsoft.com/repos/mssql-server/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mssql-server.list
+          echo "deb [arch=amd64] https://packages.microsoft.com/repos/mssql-tools/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mssql-tools.list
           sudo apt-get update
           sudo apt-get install -y mssql-tools unixodbc-dev
 
