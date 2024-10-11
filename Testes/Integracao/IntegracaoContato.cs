@@ -28,25 +28,19 @@ public class UsuarioControllerIntegrationTests
     private IConfiguration _configuration;
 
     [SetUp]
-    public void SetUp()
+    public async Task SetUp()
     {
-        var projectRoot = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
-        _configuration = new ConfigurationBuilder()
-            .SetBasePath(projectRoot)
-            .AddJsonFile("appsettings.test.json")
-            .Build();
-
         var dbOptions = new DbContextOptionsBuilder<AppDbContext>()
-            .UseSqlServer(_configuration.GetConnectionString("DefaultConnection"))
+            .UseSqlServer("Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True;")
             .Options;
 
         _dbContext = new AppDbContext(dbOptions);
-        _dbContext.Database.EnsureCreated();
+        await _dbContext.Database.EnsureCreatedAsync();
 
         // Configuração do AutoMapper
         _mapper = new MapperConfiguration(cfg =>
         {
-            cfg.AddProfile<MappingProfile>(); // Defina o seu perfil de mapeamento
+            cfg.AddProfile<MappingProfile>();
         }).CreateMapper();
 
         // Inicializando os serviços e controllers com injeção de dependência
@@ -57,6 +51,16 @@ public class UsuarioControllerIntegrationTests
         _tokenController.ControllerContext.HttpContext = new DefaultHttpContext();
 
         _usuarioController = new UsuarioController(_usuarioService, _mapper);
+
+        // Inserindo um usuário para autenticação
+        var usuario = new Usuario
+        {
+            Email = "joao.silva@exemplo.com",
+            Password = "hashed_password_aqui", // Ajuste o hash conforme necessário
+            RoleId = 1
+        };
+        _dbContext.Usuario.Add(usuario);
+        await _dbContext.SaveChangesAsync();
     }
 
     // Método para obter o token de autenticação usando um usuário existente no banco
