@@ -55,24 +55,16 @@ jobs:
             sleep 2
           done
 
-      - name: Create initial data SQL file
+      - name: Recreate TestDb Database
         run: |
-          echo 'USE TestDb;
-          INSERT INTO Papel (Tipo) VALUES (''Administrador''), (''Usuario'');
-          INSERT INTO Regiao (Name) VALUES (''Regiao 1''), (''Regiao 2'');
-          INSERT INTO TipoTelefone (Tipo) VALUES (''Celular''), (''Fixo'');
-          INSERT INTO Usuario (Name, Email, Password, RoleId) VALUES (''Usuario 1'', ''joao.silva@exemplo.com'', ''senha1'', 1);' > init.sql
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -Q 'DROP DATABASE IF EXISTS TestDb; CREATE DATABASE TestDb;'
+
+      - name: Run EF Core Migrations
+        run: dotnet ef database update --project GerContatos.API --connection "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True"
 
       - name: Insert initial data using SQL script
         run: |
-          for i in {30..0}; do
-            if /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb -i init.sql > /dev/null; then
-              echo 'Data inserted successfully!'
-              break
-            fi
-            echo 'Waiting for SQL Server to be ready...'
-            sleep 2
-          done
+          /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb -i init.sql
 
       - name: Run tests
         env:
@@ -80,12 +72,12 @@ jobs:
         run: |
           dotnet restore Testes/Testes.csproj
           dotnet test Testes/Testes.csproj --logger "trx;LogFileName=test_results.trx"
-          
+
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
 
       - name: Tag API Image for Docker Hub
         run: docker tag my-image-api:latest ${{ secrets.DOCKER_HUB_USERNAME }}/my-image-api:latest
-        
+
       - name: Push API Image to Docker Hub
         run: docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-image-api:latest
