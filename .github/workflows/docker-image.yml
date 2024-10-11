@@ -29,6 +29,9 @@ jobs:
           sudo curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | jq -r .tag_name)/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
 
+      - name: Install dotnet-ef tool
+        run: dotnet tool install --global dotnet-ef
+
       - name: Build the Docker image API
         run: docker build . --file Dockerfile --tag my-image-api:latest
 
@@ -44,6 +47,7 @@ jobs:
 
       - name: Create and apply database migrations
         run: |
+          export PATH="$PATH:$HOME/.dotnet/tools"  # Adiciona o caminho das ferramentas dotnet ao PATH
           dotnet ef database update --project Infrastructure
 
       - name: Run tests
