@@ -66,7 +66,7 @@ public class UsuarioControllerIntegrationTests
         var usuario = new Usuario
         {
             Email = "joao.silva@exemplo.com",
-            Password = "hashed_password_aqui", // Ajuste o hash conforme necessário
+            Password = "senhaSegura123", // Ajuste o hash conforme necessário
             RoleId = papel.Id // Usando o ID do papel inserido
         };
         _dbContext.Usuario.Add(usuario);
