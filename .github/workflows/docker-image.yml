@@ -47,11 +47,12 @@ jobs:
 
       - name: Create appsettings.json
         run: |
+          mkdir -p Infrastructure  # Cria o diretório, se não existir
           echo '{
             "ConnectionStrings": {
               "DefaultConnection": "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!"
             }
-          }' > GerContatos.TechRX/Infrastructure/appsettings.json
+          }' > Infrastructure/appsettings.json
 
       - name: Create and apply database migrations
         run: |
