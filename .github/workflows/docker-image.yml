@@ -45,6 +45,14 @@ jobs:
             sleep 1
           done
 
+      - name: Create appsettings.json
+        run: |
+          echo '{
+            "ConnectionStrings": {
+              "DefaultConnection": "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!"
+            }
+          }' > GerContatos.TechRX/Infrastructure/appsettings.json
+
       - name: Create and apply database migrations
         run: |
           export PATH="$PATH:$HOME/.dotnet/tools"  # Adiciona o caminho das ferramentas dotnet ao PATH
