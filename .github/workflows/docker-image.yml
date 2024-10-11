@@ -45,7 +45,7 @@ jobs:
       - name: Run specific integration tests
         env:
           ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!" 
-        run: dotnet test "./Testes/Integracao/IntegracaoContato.cs" --logger "trx;LogFileName=test_results.trx"
+        run: dotnet test "Testes/Integracao/IntegracaoContato.cs" --logger "trx;LogFileName=test_results.trx"
 
       - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}" | docker login -u "${{ secrets.DOCKER_HUB_USERNAME }}" --password-stdin
