@@ -42,6 +42,10 @@ jobs:
             sleep 1
           done
 
+      - name: Create and apply database migrations
+        run: |
+          dotnet ef database update --project Infrastructure
+
       - name: Run tests
         env:
           ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!" 
