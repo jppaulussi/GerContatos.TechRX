@@ -18,7 +18,7 @@ jobs:
           SA_PASSWORD: "SenhaSegura123!"
         ports:
           - 1433:1433
-        options: > 
+        options: >
           --network-alias sqlserver
 
     steps:
@@ -40,14 +40,14 @@ jobs:
           mkdir -p Infrastructure  # Cria o diretório, se não existir
           echo '{
             "ConnectionStrings": {
-              "DefaultConnection": "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True"
+              "DefaultConnection": "Server=sqlserver,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True"
             }
           }' > Infrastructure/appsettings.json
 
       - name: Wait for SQL Server to be ready
         run: |
           for i in {30..0}; do
-            if echo 'SELECT 1' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' > /dev/null; then
+            if echo 'SELECT 1' | /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'SenhaSegura123!' > /dev/null; then
               echo 'SQL Server is ready!'
               break
             fi
@@ -55,33 +55,30 @@ jobs:
             sleep 2  # Aumenta o tempo de espera
           done
 
+      - name: Install mssql-tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y curl gnupg
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
+          echo "deb [arch=amd64] https://packages.microsoft.com/repos/mssql-tools/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mssql-tools.list
+          sudo apt-get update
+          sudo apt-get install -y mssql-tools unixodbc-dev
+
+      - name: Insert initial data into the database
+        run: |
+          echo 'INSERT INTO Papel (Tipo) VALUES ("Administrador"), ("Usuario");' | /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'SenhaSegura123!' -d TestDb
+          echo 'INSERT INTO Regiao (Name) VALUES ("Regiao 1"), ("Regiao 2");' | /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'SenhaSegura123!' -d TestDb
+          echo 'INSERT INTO TipoTelefone (Tipo) VALUES ("Celular"), ("Fixo");' | /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'SenhaSegura123!' -d TestDb
+          echo 'INSERT INTO Usuario (Name, Email, Password, RoleId) VALUES ("Usuario 1", "joao.silva@exemplo.com", "senha1", 1);' | /opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P 'SenhaSegura123!' -d TestDb
+
       - name: Create and apply database migrations
         run: |
           export PATH="$PATH:$HOME/.dotnet/tools"  # Adiciona o caminho das ferramentas dotnet ao PATH
           dotnet ef database update --project Infrastructure
 
-      - name: Install mssql-tools
-        run: |
-  
-          sudo apt-get update
-          sudo apt-get install -y curl gnupg
-          curl https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/microsoft.gpg
-          echo "deb [arch=amd64] https://packages.microsoft.com/repos/mssql-server/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mssql-server.list
-          echo "deb [arch=amd64] https://packages.microsoft.com/repos/mssql-tools/ubuntu/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mssql-tools.list
-          sudo apt-get update
-          sudo apt-get install -y mssql-tools unixodbc-dev
-
-
-      - name: Insert initial data into the database
-        run: |
-          echo 'INSERT INTO Papel (Tipo) VALUES ("Administrador"), ("Usuario");' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb
-          echo 'INSERT INTO Regiao (Name) VALUES ("Regiao 1"), ("Regiao 2");' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb
-          echo 'INSERT INTO TipoTelefone (Tipo) VALUES ("Celular"), ("Fixo");' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb
-          echo 'INSERT INTO Usuario (Name, Email, Password, RoleId) VALUES ("Usuario 1", "joao.silva@exemplo.com", "senha1", 1);' | /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -d TestDb
-
       - name: Run tests
         env:
-          ConnectionStrings__DefaultConnection: "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!" 
+          ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!" 
         run: |
           dotnet restore Testes/Testes.csproj  # Garante que as dependências estão atualizadas
           dotnet test Testes/Testes.csproj --logger "trx;LogFileName=test_results.trx"  # Executa todos os testes do projeto de testes
