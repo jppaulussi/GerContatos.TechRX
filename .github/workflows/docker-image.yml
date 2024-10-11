@@ -70,6 +70,9 @@ jobs:
         run: |
           /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'SenhaSegura123!' -Q 'DROP DATABASE IF EXISTS TestDb; CREATE DATABASE TestDb;'
 
+      - name: Install EntityFrameworkCore Design Package
+        run: dotnet add GerContatos.API package Microsoft.EntityFrameworkCore.Design
+
       - name: Run EF Core Migrations
         run: dotnet ef database update --project GerContatos.API --connection "Server=localhost,1433;Database=TestDb;User Id=sa;Password=SenhaSegura123!;TrustServerCertificate=True"
 
