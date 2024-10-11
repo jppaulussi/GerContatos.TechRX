@@ -83,7 +83,7 @@ jobs:
           INSERT INTO Papel (Tipo) VALUES (''Administrador''), (''Usuario'');
           INSERT INTO Regiao (Name) VALUES (''Regiao 1''), (''Regiao 2'');
           INSERT INTO TipoTelefone (Tipo) VALUES (''Celular''), (''Fixo'');
-          INSERT INTO Usuario (Name, Email, Password, RoleId) VALUES (''Usuario 1'', ''joao.silva@exemplo.com'', ''senha1'', 1);' > init.sql
+          INSERT INTO Usuario (Name, Email, Password, RoleId) VALUES (''Usuario 1'', ''joao.silva@exemplo.com'', ''senhaSegura123'', 1);' > init.sql
 
       - name: Insert initial data using SQL script
         run: |
