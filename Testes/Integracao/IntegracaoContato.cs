@@ -78,17 +78,17 @@ public class UsuarioControllerIntegrationTests
     {
         var loginRequest = new GetUsuarioTokenRequest
         {
-            Email = "joao.silva@exemplo.com",  // Substitua pelo email do usuário existente no banco
-            Password = "senhaSegura123"        // Substitua pela senha do usuário existente no banco
+            Email = "joao.silva@exemplo.com",
+            Password = "senhaSegura123"
         };
 
         var result = await _tokenController.Post(loginRequest) as ObjectResult;
 
-        Assert.IsNotNull(result);
-        Assert.AreEqual(200, result.StatusCode);
+        Assert.IsNotNull(result, "O resultado não pode ser nulo."); // Adicionando mensagem de erro
+        Assert.AreEqual(200, result.StatusCode, "O status deve ser 200 OK."); // Adicionando mensagem de erro
 
         var token = result.Value as string;
-        Assert.IsNotNull(token);
+        Assert.IsNotNull(token, "O token não pode ser nulo."); // Adicionando mensagem de erro
         return token;
     }
 
